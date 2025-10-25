@@ -27,15 +27,15 @@ APP_DATA = {
     "Class 10": {
         "Physics": {
             "Motion in a Straight Line": {
-                "video": "[https://www.youtube.com/watch?v=D-y-N2e2s0E](https://www.youtube.com/watch?v=D-y-N2e2s0E)" 
+                "video": "https://www.youtube.com/watch?v=D-y-N2e2s0E" 
             },
             "Gravity": {
-                "video": "[https://www.youtube.com/watch?v=E-b-mz14sD8](https://www.youtube.com/watch?v=E-b-mz14sD8)"
+                "video": "https://www.youtube.com/watch?v=E-b-mz14sD8"
             }
         },
         "Chemistry": {
             "The Atom": {
-                "video": "[https://www.youtube.com/watch?v=1xSQlwWgh8M](https://www.youtube.com/watch?v=1xSQlwWgh8M)"
+                "video": "https://www.youtube.com/watch?v=1xSQlwWgh8M"
             }
         }
     }

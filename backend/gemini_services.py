@@ -2,7 +2,7 @@ import google.generativeai as genai
 import json, os
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.5-pro')
 
 def parse_json_from_gemini(text):
     """Safely extracts JSON from Gemini's markdown-formatted text."""
