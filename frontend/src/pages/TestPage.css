@@ -1,0 +1,28 @@
+.test-page .question-box {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.test-page h4 { margin-top: 0; }
+.options-container { display: flex; flex-direction: column; gap: 10px; }
+.option-label {
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  background: #f9f9f9;
+  cursor: pointer;
+}
+.option-label input { margin-right: 10px; }
+.option-label:has(input:checked) {
+  background: #f0f4ff;
+  border: 1px solid #4a69bd;
+}
+.submit-btn {
+  padding: 12px 25px; background-color: #4a69bd;
+  color: #fff; text-decoration: none; font-weight: 600;
+  border-radius: 8px; border: none; cursor: pointer;
+  font-size: 1.1rem; width: 100%;
+}
+.submit-btn:disabled { background-color: #aaa; }
