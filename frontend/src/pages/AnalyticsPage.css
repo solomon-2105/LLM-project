@@ -1,0 +1,46 @@
+/* file: frontend/src/pages/AnalyticsPage.css */
+
+.analytics-page h1, .analytics-page h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.history-table-container {
+  margin-top: 30px;
+  overflow-x: auto; /* Allows horizontal scrolling on small screens */
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse; /* Removes gaps between cells */
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden; /* Ensures border-radius applies to table */
+}
+
+.history-table th, .history-table td {
+  border: 1px solid #e0e0e0;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.history-table thead th {
+  background-color: #f0f4ff; /* Light blue header */
+  color: #333;
+  font-weight: 600;
+}
+
+.history-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Zebra striping for rows */
+}
+
+.history-table tbody tr:hover {
+  background-color: #f1f1f1; /* Highlight row on hover */
+}
+
+/* Optional: Center score column */
+.history-table td:last-child {
+  text-align: center;
+  font-weight: 500;
+}

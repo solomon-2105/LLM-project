@@ -2,6 +2,7 @@ import google.generativeai as genai
 import json, os
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+# We are using 1.0-pro. This will FAIL until you set up billing in Google Cloud.
 model = genai.GenerativeModel('gemini-2.5-pro')
 
 def parse_json_from_gemini(text):
@@ -22,7 +23,7 @@ def parse_json_from_gemini(text):
         print(f"Error parsing JSON: {e}\nText was: {text}")
         return None
 
-# --- NEW FUNCTION ---
+# --- FUNCTION FOR NOTES ---
 def get_gemini_notes(topic):
     """Generates notes for the learn page."""
     prompt = f"""
@@ -41,8 +42,36 @@ def get_gemini_notes(topic):
         return response.text
     except Exception as e:
         print(f"Error generating notes: {e}")
-        return "Error: Could not generate notes for this topic."
+        # Return the error message so the frontend can display it
+        return f"Error: {e}"
 
+# --- THIS IS THE NEW FUNCTION YOU WANTED ---
+def get_gemini_video_link(topic):
+    """Asks Gemini to find a relevant YouTube video URL."""
+    prompt = f"""
+    Find a good, introductory YouTube video tutorial for a high school student 
+    on the topic of '{topic}'. 
+    
+    Please provide ONLY the full YouTube URL (e.g., [https://www.youtube.com/watch?v=](https://www.youtube.com/watch?v=)...) 
+    and nothing else. If you cannot find a suitable video, return the text "NOT_FOUND".
+    """
+    try:
+        # NOTE: This prompt may fail if the model (e.g., 1.0-pro) doesn't have web-browsing.
+        # If it fails, you MUST use a newer model like 'gemini-1.5-flash'
+        response = model.generate_content(prompt)
+        url = response.text.strip()
+        
+        # Check if the response is a valid YouTube link
+        if "youtube.com" in url or "youtu.be" in url:
+            return url
+        else:
+            print(f"Gemini did not return a valid YouTube URL for '{topic}'. Response: {url}")
+            return None # Indicate failure
+    except Exception as e:
+        print(f"Error getting video link from Gemini: {e}")
+        return None # Indicate failure
+
+# --- FUNCTION FOR TEST QUESTIONS ---
 def generate_test_questions(topic):
     """Generates 5 initial test questions."""
     prompt = f"""
@@ -74,6 +103,7 @@ def generate_test_questions(topic):
         print(f"Error generating test questions: {e}")
         return None
 
+# --- FUNCTION FOR ANALYSIS ---
 def analyze_wrong_answers(questions, user_answers, topic):
     """Generates the analysis page content."""
     prompt = f"""
@@ -96,6 +126,7 @@ def analyze_wrong_answers(questions, user_answers, topic):
         print(f"Error analyzing answers: {e}")
         return None
 
+# --- FUNCTION FOR DYNAMIC TEST ---
 def generate_dynamic_assessment(topic, weak_concepts):
     """Generates the 3 Easy, 5 Medium, 2 Hard test."""
     prompt = f"""

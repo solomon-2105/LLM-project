@@ -2,9 +2,17 @@ import os
 from googleapiclient.discovery import build
 
 def search_youtube(query):
+    """
+    Searches YouTube for a tutorial video and returns a clean URL.
+    """
     api_key = os.environ.get("YOUTUBE_API_KEY")
+    
+    # Fallback: If no API key, return a Google search link
+    fallback_url = "https://www.google.com/search?q=" + query.replace(" ", "+")
+    
     if not api_key:
-        return "[https://www.google.com/search?q=](https://www.google.com/search?q=)" + query.replace(" ", "+") # Fallback
+        print("Warning: YOUTUBE_API_KEY not found. Returning Google search URL.")
+        return fallback_url
     
     try:
         youtube = build('youtube', 'v3', developerKey=api_key)
@@ -19,9 +27,13 @@ def search_youtube(query):
         
         if response['items']:
             video_id = response['items'][0]['id']['videoId']
-            return f"[https://www.youtube.com/watch?v=](https://www.youtube.com/watch?v=){video_id}"
+            # Return the clean, standard YouTube URL
+            return f"https://www.youtube.com/watch?v={video_id}"
         else:
-            return "[https://www.google.com/search?q=](https://www.google.com/search?q=)" + query.replace(" ", "+")
+            # No video found, return Google search
+            return fallback_url
+            
     except Exception as e:
         print(f"Error searching YouTube: {e}")
-        return "[https://www.google.com/search?q=](https://www.google.com/search?q=)" + query.replace(" ", "+")
+        # On error, return Google search
+        return fallback_url

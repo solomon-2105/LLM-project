@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './AnalysisPage.css'; // We'll create this
+import './AnalysisPage.css';
 
 const API_URL = "http://localhost:5000";
 
@@ -10,7 +10,13 @@ function YouTubeEmbed({ videoUrl }) {
   const embedUrl = `https://www.youtube.com/embed/${videoId}`;
   return (
     <div className="video-container">
-      <iframe src={embedUrl} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title="Embedded YouTube Video"></iframe>
+      <iframe
+        src={embedUrl}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        title="Embedded YouTube Video"
+      ></iframe>
     </div>
   );
 }
@@ -18,14 +24,25 @@ function YouTubeEmbed({ videoUrl }) {
 function AnalysisPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // analysisData and topicInfo are passed from the TestPage
-  const [analysisData, setAnalysisData] = useState(location.state?.analysis || []);
-  const [topicInfo, setTopicInfo] = useState(location.state?.topicInfo || null);
-  
+
+  const [analysisData] = useState(location.state?.analysis || []);
+  const [topicInfo] = useState(location.state?.topicInfo || null);
+  const [scoreData] = useState(location.state?.scoreData || null);
+
   if (!analysisData || analysisData.length === 0) {
     return (
       <div>
+        {scoreData && (
+          <div className="score-box">
+            <h2>Your Score</h2>
+            <div className="score-display">
+              {scoreData.correct} / {scoreData.total}
+            </div>
+            <div className="score-percentage">
+              ({scoreData.percentage.toFixed(0)}%)
+            </div>
+          </div>
+        )}
         <h1>No Analysis Found</h1>
         <p>You may have gotten a perfect score, or an error occurred.</p>
         <button onClick={() => navigate('/')}>Back to Learn</button>
@@ -33,27 +50,16 @@ function AnalysisPage() {
     );
   }
 
-  // This is a "recursive" feature.
-  // We re-use the TestPage to take the new dynamic test.
   const takeDynamicTest = async () => {
     const weak_concepts = analysisData.map(a => a.concept_name);
-    
     try {
-      // 1. Generate the new test
       const response = await axios.post(`${API_URL}/api/generate-dynamic-test`, {
         topic: topicInfo.topic,
-        weak_concepts: weak_concepts
+        weak_concepts: weak_concepts,
       });
-      
-      // 2. Save this new test data to localStorage
-      // We'll hijack the 'currentQuiz' key that TestPage looks for
       localStorage.setItem('currentQuiz', JSON.stringify(response.data));
       localStorage.setItem('currentTopicName', `Dynamic Test: ${topicInfo.topic}`);
-      
-      // 3. Navigate to TestPage
-      // It will now load our new dynamic test!
       navigate('/test');
-      
     } catch (error) {
       console.error("Error generating dynamic test:", error);
       alert("Failed to create dynamic test.");
@@ -62,19 +68,31 @@ function AnalysisPage() {
 
   return (
     <div className="analysis-page">
+      {scoreData && (
+        <div className="score-box">
+          <h2>Your Score</h2>
+          <div className="score-display">
+            {scoreData.correct} / {scoreData.total}
+          </div>
+          <div className="score-percentage">
+            ({scoreData.percentage.toFixed(0)}%)
+          </div>
+        </div>
+      )}
+
       <h1>Your Test Analysis for {topicInfo?.topic}</h1>
       <p>You seem to be struggling with the following concepts. Let's review!</p>
-      
+
       {analysisData.map((item, index) => (
         <div key={index} className="analysis-item">
           <h2>Concept: {item.concept_name}</h2>
-          
+
           <h3>🧠 Explanation</h3>
           <p>{item.explanation}</p>
-          
+
           <h3>📺 Video to Watch</h3>
           <YouTubeEmbed videoUrl={item.video_url} />
-          
+
           <h3>✏️ Practice Questions</h3>
           {item.practice_questions.map((q, qIndex) => (
             <div key={qIndex} className="practice-q">
@@ -89,7 +107,7 @@ function AnalysisPage() {
           ))}
         </div>
       ))}
-      
+
       <div className="dynamic-test-box">
         <h2>Ready to try again?</h2>
         <p>Let's take a new test focusing on just these weak areas.</p>
@@ -100,4 +118,5 @@ function AnalysisPage() {
     </div>
   );
 }
+
 export default AnalysisPage;
